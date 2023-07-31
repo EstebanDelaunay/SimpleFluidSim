@@ -1,17 +1,11 @@
-#include <iostream>
 #include <cmath>
-
-using std::cout;
-using std::endl;
-using std::begin;
-using std::end;
-using std::sin;
+#include <fstream>
 
 int main()
 {
 	// Paramètres physiques
 	constexpr double radius = 0.5, Re = 200.0, uInf = 1.0;
-	constexpr double pi(3.14159);
+	constexpr double pi(3.141592653589793);
 
 	// Maillage espace
 	constexpr size_t sizeR(40), sizeTheta(40);
@@ -24,13 +18,12 @@ int main()
 	constexpr double lengthR = 19.0 * radius;
 	constexpr double stepSizeR = lengthR / (sizeR - 1.0);
 	double r[sizeR]{ radius };
-	for (double* p = r + 1; p != end(r); p++) { *p = *(p - 1) + stepSizeR; }
+	for (double* p = r + 1; p != std::end(r); p++) { *p = *(p - 1) + stepSizeR; }
 
 	constexpr double lengthTheta = 2.0 * pi;
 	constexpr double stepSizeTheta = lengthTheta / (sizeTheta - 1.0);
 	double theta[sizeTheta]{ 0.0 };
-	for (double* p = theta + 1; p != end(theta); p++) { *p = *(p - 1) + stepSizeTheta; }
-
+	for (double* p = theta + 1; p != std::end(theta); p++) { *p = *(p - 1) + stepSizeTheta; }
 
 	double psi[sizeR][sizeTheta]{ 0.0 };
 	double psiOld[sizeR][sizeTheta]{ 0.0 };
@@ -46,6 +39,7 @@ int main()
 		psi[sizeR - 1][j] = uInf * 19.0 * radius * sin(theta[j]) + 20.0;
 	}
 
+	// Calcul
 	int k = 0;
 	double error = 1.0;
 	while (k < kMax && error > eps)
@@ -70,10 +64,16 @@ int main()
 				error += psi[i][j] - psiOld[i][j];
 			}
 		}
-		//cout << error << " Iterations " << k++ << endl;
 	}
 
-	cout << "Done" << endl;
+	// Exportation des données
+	std::ofstream expFile("data", std::ofstream::out);
+	for (size_t i = 0; i != sizeR; ++i) {
+		for (size_t j = 0; j != sizeTheta; ++j) {
+			expFile << psi[i][j] << " ";
+		}
+		expFile << std::endl;
+	}
 
 	return 0;
 }
