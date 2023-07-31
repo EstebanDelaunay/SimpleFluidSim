@@ -70,7 +70,7 @@ int main()
 				error += psi[i][j] - psiOld[i][j];
 			}
 		}
-		cout << error << " Iterations " << k++ << endl;
+		//cout << error << " Iterations " << k++ << endl;
 	}
 
 	cout << "Done" << endl;
